@@ -51,16 +51,21 @@ CREATE TABLE Modules (
     NumberOfCredits INT
 );
 
+CREATE TABLE LetterGrades (
+    LetterGrade VARCHAR(2) PRIMARY KEY,
+    GradePoint DECIMAL(3, 2) NOT NULL
+);
 -- Create Grades Table
 CREATE TABLE Grades (
     Module VARCHAR(100),
     Year INT,
     Semester INT,
     StudentID INT,
-    GradePoints FlOAT,
+    LetterGrade VARCHAR(2),
     PRIMARY KEY (Module, Year, Semester, StudentID),
     FOREIGN KEY (Module) REFERENCES Modules(Module),
-    FOREIGN KEY (StudentID) REFERENCES Students(StudentID)
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    FOREIGN KEY (LetterGrade) REFERENCES LetterGrades(LetterGrade)
 );
 
 -- Create LecturerModules Table
@@ -78,11 +83,6 @@ CREATE TABLE ProgrammeModules (
     PRIMARY KEY (ProgrammeID, Module),
     FOREIGN KEY (ProgrammeID) REFERENCES Programmes(ProgrammeID),
     FOREIGN KEY (Module) REFERENCES Modules(Module)
-);
-
-CREATE TABLE LetterGrades (
-    LetterGrade VARCHAR(2) PRIMARY KEY,
-    GradePoint DECIMAL(3, 2) NOT NULL
 );
 -- Create StudentUsers Table
 CREATE TABLE StudentUsers (
@@ -222,59 +222,46 @@ INSERT INTO LecturerUsers (LecturerID, PasswordHash) VALUES
 (4002, 'lecturerpass2'),
 (4003, 'lecturerpass3');
 
-INSERT INTO Grades (Module, Year, Semester, StudentID, GradePoints) VALUES
-('Introduction to Programming', 2024, 1, 1001, 3.67),
-('Data Structures', 2024, 1, 1001, 2.00),
-('Algorithms', 2024, 1, 1001, 3.33),
-('Database Systems', 2024, 1, 1001, 2.33),
-('Operating Systems', 2024, 1, 1001, 1.30),
-('Software Engineering', 2024, 1, 1001, 3.00),
-('Computer Networks', 2024, 1, 1001, 4.00),
-('Artificial Intelligence', 2024, 2, 1001, 3.67),
-('Machine Learning', 2024, 2, 1001, 2.00),
-('Web Development', 2024, 2, 1001, 3.33),
-('Business Management', 2024, 1, 1002, 2.33),
-('Marketing Principles', 2024, 1, 1002, 1.30),
-('Financial Accounting', 2024, 1, 1002, 3.00),
-('Corporate Finance', 2024, 1, 1002, 4.00),
-('Human Resource Management', 2024, 1, 1002, 3.67),
-('Thermodynamics', 2024, 1, 1003, 2.00),
-('Fluid Mechanics', 2024, 1, 1003, 3.33),
-('Circuit Analysis', 2024, 1, 1003, 2.33),
-('Digital Systems', 2024, 1, 1003, 1.30),
-('Structural Analysis', 2024, 1, 1003, 3.00),
-('Organic Chemistry', 2024, 1, 1004, 4.00),
-('Inorganic Chemistry', 2024, 1, 1004, 3.67),
-('Cell Biology', 2024, 1, 1004, 2.00),
-('Genetics', 2024, 1, 1004, 3.33),
-('Quantum Physics', 2024, 1, 1004, 2.33),
-('Introduction to Programming', 2024, 2, 1005, 1.30),
-('Data Structures', 2024, 2, 1005, 3.00),
-('Algorithms', 2024, 2, 1005, 4.00),
-('Database Systems', 2024, 2, 1005, 3.67),
-('Operating Systems', 2024, 2, 1005, 2.00),
-('Software Engineering', 2024, 2, 1005, 3.33),
-('Computer Networks', 2024, 2, 1005, 2.33),
-('Artificial Intelligence', 2024, 2, 1006, 1.30),
-('Machine Learning', 2024, 2, 1006, 3.00),
-('Web Development', 2024, 2, 1006, 4.00),
-('Business Management', 2024, 2, 1006, 3.67),
-('Marketing Principles', 2024, 2, 1006, 2.00),
-('Financial Accounting', 2024, 2, 1006, 3.33),
-('Corporate Finance', 2024, 2, 1006, 2.33);
-
-INSERT INTO LecturerModules (LecturerID, Module) VALUES
-(4001, 'Introduction to Programming'),
-(4001, 'Data Structures'),
-(4001, 'Algorithms'),
-(4002, 'Business Management'),
-(4002, 'Marketing Principles'),
-(4002, 'Financial Accounting'),
-(4003, 'Thermodynamics'),
-(4003, 'Fluid Mechanics'),
-(4003, 'Circuit Analysis'),
-(4003, 'Digital Systems');
-
+INSERT INTO Grades (Module, Year, Semester, StudentID, LetterGrade) VALUES
+('Introduction to Programming', 2024, 1, 1001, 'A-'),
+('Data Structures', 2024, 1, 1001, 'C'),
+('Algorithms', 2024, 1, 1001, 'B+'),
+('Database Systems', 2024, 1, 1001, 'C+'),
+('Operating Systems', 2024, 1, 1001, 'D+'),
+('Software Engineering', 2024, 1, 1001, 'B'),
+('Computer Networks', 2024, 1, 1001, 'A'),
+('Artificial Intelligence', 2024, 2, 1001, 'A-'),
+('Machine Learning', 2024, 2, 1001, 'C'),
+('Web Development', 2024, 2, 1001, 'B+'),
+('Business Management', 2024, 1, 1002, 'C+'),
+('Marketing Principles', 2024, 1, 1002, 'D+'),
+('Financial Accounting', 2024, 1, 1002, 'B'),
+('Corporate Finance', 2024, 1, 1002, 'A'),
+('Human Resource Management', 2024, 1, 1002, 'A-'),
+('Thermodynamics', 2024, 1, 1003, 'C'),
+('Fluid Mechanics', 2024, 1, 1003, 'B+'),
+('Circuit Analysis', 2024, 1, 1003, 'C+'),
+('Digital Systems', 2024, 1, 1003, 'D+'),
+('Structural Analysis', 2024, 1, 1003, 'B'),
+('Organic Chemistry', 2024, 1, 1004, 'A'),
+('Inorganic Chemistry', 2024, 1, 1004, 'A-'),
+('Cell Biology', 2024, 1, 1004, 'C'),
+('Genetics', 2024, 1, 1004, 'B+'),
+('Quantum Physics', 2024, 1, 1004, 'C+'),
+('Introduction to Programming', 2024, 2, 1005, 'D+'),
+('Data Structures', 2024, 2, 1005, 'B'),
+('Algorithms', 2024, 2, 1005, 'A'),
+('Database Systems', 2024, 2, 1005, 'A-'),
+('Operating Systems', 2024, 2, 1005, 'C'),
+('Software Engineering', 2024, 2, 1005, 'B+'),
+('Computer Networks', 2024, 2, 1005, 'C+'),
+('Artificial Intelligence', 2024, 2, 1006, 'D+'),
+('Machine Learning', 2024, 2, 1006, 'B'),
+('Web Development', 2024, 2, 1006, 'A'),
+('Business Management', 2024, 2, 1006, 'A-'),
+('Marketing Principles', 2024, 2, 1006, 'C'),
+('Financial Accounting', 2024, 2, 1006, 'B+'),
+('Corporate Finance', 2024, 2, 1006, 'C+');
 
 INSERT INTO LetterGrades (LetterGrade, GradePoint) VALUES
 ('A', 4.0),
@@ -289,4 +276,18 @@ INSERT INTO LetterGrades (LetterGrade, GradePoint) VALUES
 ('D', 1.0),
 ('F', 0.0);
 
-select * from students;
+INSERT INTO LecturerModules (LecturerID, Module) VALUES
+(4001, 'Introduction to Programming'),
+(4001, 'Data Structures'),
+(4001, 'Algorithms'),
+(4002, 'Business Management'),
+(4002, 'Marketing Principles'),
+(4002, 'Financial Accounting'),
+(4003, 'Thermodynamics'),
+(4003, 'Fluid Mechanics'),
+(4003, 'Circuit Analysis'),
+(4003, 'Digital Systems');
+
+
+
+select * from lecturermodules;
