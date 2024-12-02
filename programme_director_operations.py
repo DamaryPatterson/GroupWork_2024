@@ -1,6 +1,4 @@
 from admin_operation import AdminOperations
-
-
 from tabulate import tabulate
 
 class ProgrammeDirectorOperations:
@@ -58,11 +56,13 @@ class ProgrammeDirectorOperations:
         SELECT 
         s.StudentID, 
         s.StudentName, 
-        ROUND(AVG(g.GradePoints), 2) AS AverageGPA
+        ROUND(AVG(lg.GradePoint), 2) AS AverageGPA
         FROM 
         Students s
         LEFT JOIN 
         Grades g ON s.StudentID = g.StudentID
+        LEFT JOIN 
+        LetterGrades lg ON g.LetterGrade = lg.LetterGrade
         WHERE 
         s.ProgrammeID = %s
         GROUP BY 
@@ -87,15 +87,17 @@ class ProgrammeDirectorOperations:
         SELECT 
         p.ProgrammeName,
         COUNT(DISTINCT s.StudentID) AS TotalStudents,
-        ROUND(AVG(g.GradePoints), 2) AS ProgrammeAverageGPA,
-        ROUND(MIN(g.GradePoints), 2) AS LowestGPA,
-        ROUND(MAX(g.GradePoints), 2) AS HighestGPA
+        ROUND(AVG(lg.GradePoint), 2) AS ProgrammeAverageGPA,
+        ROUND(MIN(lg.GradePoint), 2) AS LowestGPA,
+        ROUND(MAX(lg.GradePoint), 2) AS HighestGPA
         FROM 
         Programmes p
         LEFT JOIN 
         Students s ON p.ProgrammeID = s.ProgrammeID
         LEFT JOIN 
         Grades g ON s.StudentID = g.StudentID
+        LEFT JOIN 
+        LetterGrades lg ON g.LetterGrade = lg.LetterGrade
         WHERE 
         p.ProgrammeID = %s
         GROUP BY 
