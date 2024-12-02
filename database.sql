@@ -112,6 +112,16 @@ CREATE TABLE LecturerUsers (
     FOREIGN KEY (LecturerID) REFERENCES Lecturers(LecturerID)
 );
 
+CREATE TABLE Advisors (
+    AdvisorID INT AUTO_INCREMENT PRIMARY KEY,
+    AdvisorName VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) NOT NULL
+);
+
+ALTER TABLE Students
+ADD COLUMN AdvisorID INT,
+ADD FOREIGN KEY (AdvisorID) REFERENCES Advisors(AdvisorID);
+
 INSERT INTO Programmes (ProgrammeID, ProgrammeName, School) VALUES
 (1, 'Computer Science', 'School of Computing'),
 (2, 'Business Administration', 'School of Business'),
@@ -289,5 +299,11 @@ INSERT INTO LecturerModules (LecturerID, Module) VALUES
 (4003, 'Digital Systems');
 
 
+INSERT INTO Advisors (AdvisorID, AdvisorName, Email) VALUES (1, 'John Doe', 'john.doe@example.com');
+INSERT INTO Advisors (AdvisorID, AdvisorName, Email) VALUES (2, 'Jane Smith', 'jane.smith@example.com');
+INSERT INTO Advisors (AdvisorID, AdvisorName, Email) VALUES (3, 'Emily Johnson', 'emily.johnson@example.com');
+INSERT INTO Advisors (AdvisorID, AdvisorName, Email) VALUES (4, 'Michael Brown', 'michael.brown@example.com');
+INSERT INTO Advisors (AdvisorID, AdvisorName, Email) VALUES (5, 'Sarah Davis', 'sarah.davis@example.com');
 
-select * from lecturermodules;
+
+select * from students;

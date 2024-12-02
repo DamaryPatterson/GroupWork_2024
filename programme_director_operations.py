@@ -14,7 +14,8 @@ class ProgrammeDirectorOperations:
             print("2. View Student Performance")
             print("3. Generate Programme Performance Report")
             print("4. Manage Programme Modules")
-            print("5. Back to Main Menu")
+            print("5. Assign Advisor to Student")
+            print("6. Back to Main Menu")
             choice = input("Enter your choice: ")
             if choice == '1':
                 self.view_programme_details()
@@ -25,6 +26,8 @@ class ProgrammeDirectorOperations:
             elif choice == '4':
                 self.manage_programme_modules()
             elif choice == '5':
+                self.assign_advisor_to_student()
+            elif choice == '6':
                 break
             else:
                 print("Invalid choice. Please try again.")
@@ -187,3 +190,22 @@ class ProgrammeDirectorOperations:
         query = "DELETE FROM ProgrammeModules WHERE ProgrammeID = %s AND Module = %s"
         self.db.execute_update(query, (programme_id, module))
         print(f"Module {module} removed from Programme {programme_id} successfully!")
+
+    def assign_advisor_to_student(self):
+        student_id = input("Enter Student ID: ")
+        advisor_id = input("Enter Advisor ID: ")
+
+        # Check if student exists
+        if not self.admin_ops.record_exists("Students", f"StudentID = {student_id}"):
+            print("Error: Student does not exist.")
+            return
+
+        # Check if advisor exists
+        if not self.admin_ops.record_exists("Advisors", f"AdvisorID = {advisor_id}"):
+            print("Error: Advisor does not exist.")
+            return
+
+        # Assign advisor to student
+        query = "UPDATE Students SET AdvisorID = %s WHERE StudentID = %s"
+        self.db.execute_update(query, (advisor_id, student_id))
+        print(f"Advisor {advisor_id} assigned to Student {student_id} successfully!")
