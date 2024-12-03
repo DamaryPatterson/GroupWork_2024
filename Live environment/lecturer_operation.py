@@ -47,18 +47,17 @@ class LecturerOperations:
         # Query to fetch student grades for the selected module
         query = """
         SELECT s.StudentID, s.StudentName, g.Year, g.Semester, 
-        g.LetterGrade, lg.GradePoint, m.NumberOfCredits
+        g.GradePoints, m.NumberOfCredits
         FROM Students s
         JOIN Grades g ON s.StudentID = g.StudentID
         JOIN Modules m ON g.Module = m.Module
-        JOIN LetterGrades lg ON g.LetterGrade = lg.LetterGrade
         WHERE g.Module = %s
         ORDER BY s.StudentID
         """
         results = self.db.execute_query(query, (module,))
         
         if results:
-            headers = ["Student ID", "Name", "Year", "Semester", "Letter Grade", "Grade Points", "Credits"]
+            headers = ["Student ID", "Name", "Year", "Semester", "Grade Points", "Credits"]
             table = tabulate(results, headers, tablefmt="grid")
             print(f"\nGrades for Module {module}:")
             print(table)
@@ -103,6 +102,13 @@ class LecturerOperations:
             semester = input("Enter Semester: ")
             letter_grade = input("Enter Letter Grade (e.g., A, B+, C-): ")
             
+            # Convert letter grade to grade point using Prolog
+            grade_point_value = self.prolog.letter_to_grade_point(letter_grade)
+            
+            if grade_point_value is None:
+                print("Invalid letter grade entered. Please try again.")
+                continue
+            
             # Check if student is enrolled in this module
             check_query = """
             SELECT 1 
@@ -118,12 +124,12 @@ class LecturerOperations:
             
             # Insert or update grades
             query = """
-            INSERT INTO Grades (StudentID, Module, Year, Semester, LetterGrade) 
+            INSERT INTO Grades (StudentID, Module, Year, Semester, GradePoints) 
             VALUES (%s, %s, %s, %s, %s)
-            ON DUPLICATE KEY UPDATE LetterGrade = %s
+            ON DUPLICATE KEY UPDATE GradePoints = %s
             """
-            self.db.execute_update(query, (student_id, module, year, semester, letter_grade, letter_grade))
-            print(f"Grade {letter_grade} submitted for Student {student_id}")
+            self.db.execute_update(query, (student_id, module, year, semester, grade_point_value, grade_point_value))
+            print(f"Grade {letter_grade} (Grade Points: {grade_point_value}) submitted for Student {student_id}")
 
     def view_module_performance(self):
         lecturer_id = input("Enter Lecturer ID: ")
@@ -150,13 +156,12 @@ class LecturerOperations:
             # Query to calculate module performance
             query = """
             SELECT 
-            ROUND(AVG(lg.GradePoint), 2) AS AverageGrade,
-            ROUND(MIN(lg.GradePoint), 2) AS MinGrade,
-            ROUND(MAX(lg.GradePoint), 2) AS MaxGrade,
-            COUNT(DISTINCT g.StudentID) AS StudentCount
-            FROM Grades g
-            JOIN LetterGrades lg ON g.LetterGrade = lg.LetterGrade
-            WHERE g.Module = %s
+            ROUND(AVG(GradePoints), 2) AS AverageGrade,
+            ROUND(MIN(GradePoints), 2) AS MinGrade,
+            ROUND(MAX(GradePoints), 2) AS MaxGrade,
+            COUNT(DISTINCT StudentID) AS StudentCount
+            FROM Grades
+            WHERE Module = %s
             """
             results = self.db.execute_query(query, (module_code,))
             

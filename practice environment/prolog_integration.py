@@ -69,13 +69,9 @@ class PrologIntegration:
         return list(self.prolog.query(query_str))
 
     def letter_to_grade_point(self, letter_grade):
-        """
-        Convert a letter grade to its corresponding grade point
-        
-        :param letter_grade: Letter grade (e.g., 'A', 'B+', 'C-')
-        :return: Corresponding grade point or None
-        """
-        result = self.query(f"grade_point(GradePoint, '{letter_grade}')")
+        query = "SELECT GradePoint FROM LetterGrades WHERE LetterGrade = %s"
+        result = self.db.execute_query(query, (letter_grade,))
         if result:
-            return result[0]['GradePoint']
-        return None
+            return result[0][0]
+        else:
+            return None
