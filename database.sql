@@ -21,6 +21,13 @@ CREATE TABLE Students (
     FOREIGN KEY (ProgrammeID) REFERENCES Programmes(ProgrammeID)
 );
 
+CREATE TABLE StudentGoals (
+    StudentID INT,
+    DesiredYear INT,
+    DesiredGPA FLOAT,
+    PRIMARY KEY (StudentID, DesiredYear),
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID)
+);
 -- Create Admins Table
 CREATE TABLE Admins (
     AdminID INT PRIMARY KEY AUTO_INCREMENT,
