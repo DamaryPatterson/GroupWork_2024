@@ -5,6 +5,7 @@ class StudentOperations:
         self.db = db
         self.prolog = prolog
 
+
     def view_student_report(self, student_id):
         query = """
         SELECT Year, Semester, SUM(lg.GradePoint * m.NumberOfCredits) AS TotalGradePoints, 

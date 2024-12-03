@@ -1,17 +1,5 @@
 :- dynamic default_gpa/1.
 
-% Grade point mapping 
-grade_point(4.0, 'A'). 
-grade_point(3.67, 'A-'). 
-grade_point(3.33, 'B+'). 
-grade_point(3.0, 'B'). 
-grade_point(2.67, 'B-'). 
-grade_point(2.33, 'C+'). 
-grade_point(2.0, 'C'). 
-grade_point(1.67, 'C-'). 
-grade_point(1.33, 'D+'). 
-grade_point(1.0, 'D'). 
-grade_point(0.0, 'F').
 
 % Default GPA threshold
 default_gpa(2.0).
