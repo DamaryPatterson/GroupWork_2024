@@ -52,7 +52,9 @@ class GPAAlert:
             message = MIMEMultipart()
             message["From"] = self.login
             message["To"] = student_email
-            message["Cc"] = ", ".join(filter(None, [advisor_email, programme_director_email, faculty_admin_email]))
+            cc_emails = [advisor_email, programme_director_email, faculty_admin_email]
+            cc_emails = [email for email in cc_emails if email]  # Filter out None values
+            message["Cc"] = ", ".join(cc_emails)
             message["Subject"] = subject
             message.attach(MIMEText(body, "plain"))
             
@@ -63,7 +65,7 @@ class GPAAlert:
                     self.logger.debug("Starting TLS.")
                     server.login(self.login, self.password)
                     self.logger.debug("Logged in to SMTP server.")
-                    server.sendmail(self.login, [student_email, advisor_email, programme_director_email, faculty_admin_email], message.as_string())
+                    server.sendmail(self.login, [student_email] + cc_emails, message.as_string())
                     self.logger.info(f"Alert sent to {student_name} and relevant parties.")
             except Exception as e:
                 self.logger.error(f"Failed to send email to {student_name}: {e}")

@@ -24,8 +24,8 @@ def main():
         # GPA alert setup
         smtp_server = "smtp.gmail.com"
         port = 587
-        login = "utechacademicprobation@gmail.com"
-        password = "utechprobation"
+        login = "damaryp90@gmail.com"
+        password = "rpmz cbtz jdqr nega"
         gpa_alert = GPAAlert(db, smtp_server, port, login, password)
 
         # Main menu setup
