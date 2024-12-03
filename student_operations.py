@@ -5,7 +5,6 @@ class StudentOperations:
         self.db = db
         self.prolog = prolog
 
-
     def view_student_report(self, student_id):
         query = """
         SELECT Year, Semester, SUM(lg.GradePoint * m.NumberOfCredits) AS TotalGradePoints, 
@@ -70,7 +69,7 @@ class StudentOperations:
             print("\nCumulative GPA Summary:")
             print(f"Cumulative GPA: {cumulative_gpa:.2f}")
             
-            if cumulative_gpa <= default_gpa:
+            if self.is_on_probation(student_id):
                 print("\n!!! ACADEMIC PROBATION ALERT !!!")
                 print(f"Your Cumulative GPA ({cumulative_gpa:.2f}) is at or below the threshold of {default_gpa}")
                 print("You may require additional academic support.")
@@ -90,3 +89,8 @@ class StudentOperations:
             print(detailed_table)
         else:
             print("No grades found for the given student ID.")
+
+    def is_on_probation(self, student_id):
+        query = f"is_on_probation({student_id})"
+        result = list(self.prolog.query(query))
+        return bool(result)
