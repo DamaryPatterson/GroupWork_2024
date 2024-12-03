@@ -4,8 +4,9 @@ from email.mime.multipart import MIMEMultipart
 import logging
 
 class GPAAlert:
-    def __init__(self, db, smtp_server, port, login, password):
+    def __init__(self, db, prolog, smtp_server, port, login, password):
         self.db = db
+        self.prolog = prolog
         self.smtp_server = smtp_server
         self.port = port
         self.login = login
@@ -16,7 +17,11 @@ class GPAAlert:
         query = """
         SELECT s.StudentID, s.StudentName, s.StudentEmail, s.ProgrammeID, s.School, 
                p.ProgrammeName, a.AdvisorName, a.Email AS AdvisorEmail, pd.ProgrammeDirectorName, 
-               pd.ProgrammeDirectorEmail, fa.AdminName AS FacultyAdminName, fa.AdminEmail AS FacultyAdminEmail
+               pd.ProgrammeDirectorEmail, fa.AdminName AS FacultyAdminName, fa.AdminEmail AS FacultyAdminEmail,
+               (SELECT AVG(lg.GradePoint) 
+                FROM Grades g 
+                JOIN LetterGrades lg ON g.LetterGrade = lg.LetterGrade 
+                WHERE g.StudentID = s.StudentID) AS CurrentGPA
         FROM Students s
         JOIN Programmes p ON s.ProgrammeID = p.ProgrammeID
         LEFT JOIN Advisors a ON s.AdvisorID = a.AdvisorID
@@ -34,16 +39,24 @@ class GPAAlert:
 
     def send_email_alerts(self, students):
         for student in students:
-            student_id, student_name, student_email, programme_id, school, programme_name, advisor_name, advisor_email, programme_director_name, programme_director_email, faculty_admin_name, faculty_admin_email = student
+            student_id, student_name, student_email, programme_id, school, programme_name, advisor_name, advisor_email, programme_director_name, programme_director_email, faculty_admin_name, faculty_admin_email, current_gpa = student
             
             subject = "Academic Probation Alert"
             body = f"""
             Dear {student_name},
 
-            Your current GPA is below the required threshold. Please contact your advisor for further assistance.
+            We hope this message finds you well. We are writing to inform you that your current GPA is {current_gpa:.2f}, which is below the required threshold of {self.prolog.get_default_gpa():.2f}. 
 
             Programme: {programme_name}
             School: {school}
+
+            We strongly encourage you to reach out to your advisor, {advisor_name if advisor_name else 'N/A'}, for guidance and support. You can contact your advisor at {advisor_email if advisor_email else 'N/A'}.
+
+            Additionally, you may want to discuss your academic progress with your Programme Director, {programme_director_name}, who can be reached at {programme_director_email}.
+
+            If you need further assistance, please do not hesitate to contact the Faculty Admin, {faculty_admin_name if faculty_admin_name else 'N/A'}, at {faculty_admin_email if faculty_admin_email else 'N/A'}.
+
+            We are here to support you and help you succeed in your academic journey.
 
             Regards,
             University Administration

@@ -232,15 +232,28 @@ INSERT INTO LecturerUsers (LecturerID, PasswordHash) VALUES
 (4002, 'lecturerpass2'),
 (4003, 'lecturerpass3');
 
+INSERT INTO LetterGrades (LetterGrade, GradePoint) VALUES
+('A', 4.0),
+('A-', 3.7),
+('B+', 3.3),
+('B', 3.0),
+('B-', 2.7),
+('C+', 2.3),
+('C', 2.0),
+('C-', 1.7),
+('D+', 1.3),
+('D', 1.0),
+('F', 0.0);
+
 INSERT INTO Grades (Module, Year, Semester, StudentID, LetterGrade) VALUES
-('Introduction to Programming', 2024, 1, 1001, 'A-'),
-('Data Structures', 2024, 1, 1001, 'C'),
+('Introduction to Programming', 2024, 1, 1001, 'D+'),
+('Data Structures', 2024, 1, 1001, 'D+'),
 ('Algorithms', 2024, 1, 1001, 'B+'),
 ('Database Systems', 2024, 1, 1001, 'C+'),
 ('Operating Systems', 2024, 1, 1001, 'D+'),
 ('Software Engineering', 2024, 1, 1001, 'B'),
-('Computer Networks', 2024, 1, 1001, 'A'),
-('Artificial Intelligence', 2024, 2, 1001, 'A-'),
+('Computer Networks', 2024, 1, 1001, 'F'),
+('Artificial Intelligence', 2024, 2, 1001, 'F'),
 ('Machine Learning', 2024, 2, 1001, 'C'),
 ('Web Development', 2024, 2, 1001, 'B+'),
 ('Business Management', 2024, 1, 1002, 'C+'),
@@ -272,19 +285,6 @@ INSERT INTO Grades (Module, Year, Semester, StudentID, LetterGrade) VALUES
 ('Marketing Principles', 2024, 2, 1006, 'C'),
 ('Financial Accounting', 2024, 2, 1006, 'B+'),
 ('Corporate Finance', 2024, 2, 1006, 'C+');
-
-INSERT INTO LetterGrades (LetterGrade, GradePoint) VALUES
-('A', 4.0),
-('A-', 3.7),
-('B+', 3.3),
-('B', 3.0),
-('B-', 2.7),
-('C+', 2.3),
-('C', 2.0),
-('C-', 1.7),
-('D+', 1.3),
-('D', 1.0),
-('F', 0.0);
 
 INSERT INTO LecturerModules (LecturerID, Module) VALUES
 (4001, 'Introduction to Programming'),
