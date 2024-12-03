@@ -28,4 +28,4 @@ sum([X|Xs], Total) :-
 is_on_probation(StudentID) :-
     default_gpa(DefaultGPA),
     student_gpa(StudentID, GPA),
-    GPA < DefaultGPA.
+    GPA =< DefaultGPA.
