@@ -1,15 +1,19 @@
+from tabulate import tabulate
+
 class StudentOperations:
     def __init__(self, db, prolog):
         self.db = db
         self.prolog = prolog
 
+
     def view_student_report(self, student_id):
         query = """
-        SELECT Year, Semester, SUM(GradePoints * NumberOfCredits) AS TotalGradePoints, 
-        SUM(NumberOfCredits) AS TotalCredits
+        SELECT Year, Semester, SUM(lg.GradePoint * m.NumberOfCredits) AS TotalGradePoints, 
+        SUM(m.NumberOfCredits) AS TotalCredits
         FROM Grades g
         JOIN Modules m ON g.Module = m.Module
-        WHERE StudentID = %s
+        JOIN LetterGrades lg ON g.LetterGrade = lg.LetterGrade
+        WHERE g.StudentID = %s
         GROUP BY Year, Semester
         ORDER BY Year, Semester
         """
@@ -36,9 +40,9 @@ class StudentOperations:
             print(f"Name: {student_name}")
             print(f"Default GPA Threshold: {default_gpa}")
             print("\nSemester-wise Performance:")
-            print("-" * 50)
-            print("Year \n Semester \n GPA")
-            print("-" * 50)
+            
+            headers = ["Year", "Semester", "GPA"]
+            table_data = []
             
             cumulative_grade_points = 0
             cumulative_credits = 0
@@ -57,7 +61,10 @@ class StudentOperations:
                     semester_details[year] = {}
                 semester_details[year][semester] = semester_gpa
                 
-                print(f"{year} \n {semester} \n {semester_gpa:.2f}")
+                table_data.append([year, semester, f"{semester_gpa:.2f}"])
+            
+            table = tabulate(table_data, headers, tablefmt="grid")
+            print(table)
             
             cumulative_gpa = cumulative_grade_points / cumulative_credits
             print("\nCumulative GPA Summary:")
@@ -69,12 +76,17 @@ class StudentOperations:
                 print("You may require additional academic support.")
             
             print("\nDetailed Semester Performance:")
-            print("-" * 50)
+            
+            detailed_headers = ["Year", "Semester", "GPA"]
+            detailed_table_data = []
+            
             for year, semesters in semester_details.items():
-                print(f"Year {year}:")
                 for semester, gpa in semesters.items():
-                    print(f" Semester {semester}: GPA {gpa:.2f}")
+                    detailed_table_data.append([year, semester, f"{gpa:.2f}"])
                     if gpa <= default_gpa:
-                        print(f" !!! Warning: Semester GPA below threshold !!!")
+                        detailed_table_data.append(["", "", "!!! Warning: Semester GPA below threshold !!!"])
+            
+            detailed_table = tabulate(detailed_table_data, detailed_headers, tablefmt="grid")
+            print(detailed_table)
         else:
             print("No grades found for the given student ID.")

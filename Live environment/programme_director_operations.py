@@ -1,6 +1,4 @@
 from admin_operation import AdminOperations
-
-
 from tabulate import tabulate
 
 class ProgrammeDirectorOperations:
@@ -16,7 +14,8 @@ class ProgrammeDirectorOperations:
             print("2. View Student Performance")
             print("3. Generate Programme Performance Report")
             print("4. Manage Programme Modules")
-            print("5. Back to Main Menu")
+            print("5. Assign Advisor to Student")
+            print("6. Back to Main Menu")
             choice = input("Enter your choice: ")
             if choice == '1':
                 self.view_programme_details()
@@ -27,6 +26,8 @@ class ProgrammeDirectorOperations:
             elif choice == '4':
                 self.manage_programme_modules()
             elif choice == '5':
+                self.assign_advisor_to_student()
+            elif choice == '6':
                 break
             else:
                 print("Invalid choice. Please try again.")
@@ -58,11 +59,13 @@ class ProgrammeDirectorOperations:
         SELECT 
         s.StudentID, 
         s.StudentName, 
-        ROUND(AVG(g.GradePoints), 2) AS AverageGPA
+        ROUND(AVG(lg.GradePoint), 2) AS AverageGPA
         FROM 
         Students s
         LEFT JOIN 
         Grades g ON s.StudentID = g.StudentID
+        LEFT JOIN 
+        LetterGrades lg ON g.LetterGrade = lg.LetterGrade
         WHERE 
         s.ProgrammeID = %s
         GROUP BY 
@@ -87,15 +90,17 @@ class ProgrammeDirectorOperations:
         SELECT 
         p.ProgrammeName,
         COUNT(DISTINCT s.StudentID) AS TotalStudents,
-        ROUND(AVG(g.GradePoints), 2) AS ProgrammeAverageGPA,
-        ROUND(MIN(g.GradePoints), 2) AS LowestGPA,
-        ROUND(MAX(g.GradePoints), 2) AS HighestGPA
+        ROUND(AVG(lg.GradePoint), 2) AS ProgrammeAverageGPA,
+        ROUND(MIN(lg.GradePoint), 2) AS LowestGPA,
+        ROUND(MAX(lg.GradePoint), 2) AS HighestGPA
         FROM 
         Programmes p
         LEFT JOIN 
         Students s ON p.ProgrammeID = s.ProgrammeID
         LEFT JOIN 
         Grades g ON s.StudentID = g.StudentID
+        LEFT JOIN 
+        LetterGrades lg ON g.LetterGrade = lg.LetterGrade
         WHERE 
         p.ProgrammeID = %s
         GROUP BY 
@@ -185,3 +190,22 @@ class ProgrammeDirectorOperations:
         query = "DELETE FROM ProgrammeModules WHERE ProgrammeID = %s AND Module = %s"
         self.db.execute_update(query, (programme_id, module))
         print(f"Module {module} removed from Programme {programme_id} successfully!")
+
+    def assign_advisor_to_student(self):
+        student_id = input("Enter Student ID: ")
+        advisor_id = input("Enter Advisor ID: ")
+
+        # Check if student exists
+        if not self.admin_ops.record_exists("Students", f"StudentID = {student_id}"):
+            print("Error: Student does not exist.")
+            return
+
+        # Check if advisor exists
+        if not self.admin_ops.record_exists("Advisors", f"AdvisorID = {advisor_id}"):
+            print("Error: Advisor does not exist.")
+            return
+
+        # Assign advisor to student
+        query = "UPDATE Students SET AdvisorID = %s WHERE StudentID = %s"
+        self.db.execute_update(query, (advisor_id, student_id))
+        print(f"Advisor {advisor_id} assigned to Student {student_id} successfully!")
